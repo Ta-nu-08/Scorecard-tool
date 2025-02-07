@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scorecard Tool</title>
+    <h1 style="color: black;text-align: center;">Scorecard</h1>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .card { background:white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .input-field { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ccc; border-radius: 5px; }
+        .btn { background-color: #007BFF; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; }
+        .btn:hover { background-color: #0056b3; }
+        canvas { max-width: 600px; margin: 20px auto; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Data Input</h2>
+        <input class="input-field" id="name" placeholder="Name">
+        <input class="input-field" id="productivity" type="number" placeholder="Productivity">
+        <input class="input-field" id="quality" type="number" placeholder="Quality">
+        <input class="input-field" id="timeliness" type="number" placeholder="Timeliness">
+        <button class="btn" onclick="addData()">Add Data</button>
+    </div>
+
+    <div class="card">
+        <h2>Adjust Weights</h2>
+        <input class="input-field" id="weightProductivity" type="number" value="1">
+        <input class="input-field" id="weightQuality" type="number" value="1">
+        <input class="input-field" id="weightTimeliness" type="number" value="1">
+    </div>
+
+    <div class="card">
+        <h2>Score Visualization</h2>
+        <canvas id="barChart"></canvas>
+    </div>
+
+    <div class="card">
+        <h2>Export Data</h2>
+        <button class="btn" onclick="exportCSV()">Export as CSV</button>
+    </div>
+
+    <script>
+        let data = [];
+
+        function addData() {
+            let name = document.getElementById("name").value;
+            let productivity = parseFloat(document.getElementById("productivity").value) || 0;
+            let quality = parseFloat(document.getElementById("quality").value) || 0;
+            let timeliness = parseFloat(document.getElementById("timeliness").value) || 0;
+            let weightProductivity = parseFloat(document.getElementById("weightProductivity").value);
+            let weightQuality = parseFloat(document.getElementById("weightQuality").value);
+            let weightTimeliness = parseFloat(document.getElementById("weightTimeliness").value);
+            let totalWeight = weightProductivity + weightQuality + weightTimeliness;
+            let score = ((productivity * weightProductivity) + (quality * weightQuality) + (timeliness * weightTimeliness)) / totalWeight;
+            data.push({ name, score });
+            updateChart();
+        }
+
+        function updateChart() {
+            let ctx = document.getElementById("barChart").getContext("2d");
+            new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: data.map(item => item.name),
+                    datasets: [{ label: "Score", data: data.map(item => item.score), backgroundColor: "#007BFF" }]
+                }
+            });
+        }
+
+        function exportCSV() {
+            let csvContent = "Name,Score\n" + data.map(item => `${item.name},${item.score}`).join("\n");
+            let blob = new Blob([csvContent], { type: "text/csv" });
+            let link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "scorecard_data.csv";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>
