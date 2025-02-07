@@ -16,11 +16,11 @@ Score Calculation: Computes scores based on input data and weight values.
 Data Visualization: Displays scores using a bar chart.
 Export Data: Allows exporting the collected data as a CSV file (Admin only).
 
-Technologies Used
+Technologies Used:
 HTML, CSS, JavaScript
 Chart.js (for data visualization)
 
-Installation & Usage
+Installation & Usage:
 Install visual studio code
 create a folder HtmlandCss
 create a file Scorecard and complete the code and run the application.
